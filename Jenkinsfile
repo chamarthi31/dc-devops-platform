@@ -70,15 +70,52 @@ pipeline {
                 '''
             }
         }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                    echo "Pulling image from registry..."
+                    docker pull ${IMAGE}
+
+                    echo "Stopping existing application..."
+                    docker stop ${APP_NAME} || true
+
+                    echo "Removing existing application..."
+                    docker rm ${APP_NAME} || true
+
+                    echo "Starting new application..."
+                    docker run -d \
+                        --name ${APP_NAME} \
+                        --network dc-devops-net \
+                        -p 8081:8081 \
+                        ${IMAGE}
+                '''
+            }
+        }
+
+        stage('Health Check') {
+            steps {
+                sh '''
+                    echo "Waiting for application to start..."
+                    sleep 10
+
+                    echo "Checking application health..."
+                    curl -f http://localhost:8081/health
+
+                    echo ""
+                    echo "Application deployment successful."
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'CI pipeline completed successfully.'
+            echo 'CI/CD pipeline completed successfully.'
         }
 
         failure {
-            echo 'CI pipeline failed. Check the failed stage and console output.'
+            echo 'CI/CD pipeline failed. Check the failed stage and console output.'
         }
     }
 }
