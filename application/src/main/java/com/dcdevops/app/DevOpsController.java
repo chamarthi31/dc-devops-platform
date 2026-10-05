@@ -22,4 +22,9 @@ public class DevOpsController {
     public Map<String, String> health() {
         return Map.of("status", "UP");
     }
+
+    @GetMapping("/test-error")
+    public String testError() {
+        throw new RuntimeException("Intentional test error for monitoring");
+    }
 }
