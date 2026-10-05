@@ -30,7 +30,7 @@ public class DevOpsController {
 
     @GetMapping("/test-cpu")
     public String testCpu() {
-        long end = System.nanoTime() + 30_000_000_000L;
+        long end = System.nanoTime() + 120_000_000_000L;
         double result = 0;
 
         while (System.nanoTime() < end) {
