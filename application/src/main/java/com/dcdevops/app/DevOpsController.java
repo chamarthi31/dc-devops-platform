@@ -27,4 +27,16 @@ public class DevOpsController {
     public String testError() {
         throw new RuntimeException("Intentional test error for monitoring");
     }
+
+    @GetMapping("/test-cpu")
+    public String testCpu() {
+        long end = System.nanoTime() + 30_000_000_000L;
+        double result = 0;
+
+        while (System.nanoTime() < end) {
+            result += Math.sqrt(Math.random());
+        }
+
+        return "CPU test completed: " + result;
+    }
 }
